@@ -7,7 +7,7 @@ from datetime import datetime, timedelta
 
 maxTweets = 1000
 
-instance = "http://localhost:8080" #"https://nitter.net" #"http://localhost:8456"
+instance = "http://localhost:8080" 
 account = "dummyUser"
 
 def download_tweets_for_date(date):
@@ -43,7 +43,7 @@ def download_tweets_for_date(date):
     
     merged_df = pd.merge(tweets_df, matching_tweets_df, on='Reply_to', how='left')
     
-    merged_df.to_csv(f'../data/raw_data/CercaniasMadrid_tweets_{date.date()}.csv', index=False)
+    merged_df.to_csv(f'data/raw_data/CercaniasMadrid_tweets_{date.date()}.csv', index=False)
 
 def read_last_downloaded_day():
     try:
@@ -58,7 +58,7 @@ def read_last_downloaded_day():
                 last_downloaded_day = datetime.strptime(date_string, "%Y-%m-%d").date()
                 return last_downloaded_day
             else:
-                last_downloaded_day = datetime(2023, 4, 3).date()
+                last_downloaded_day = datetime(2023, 3, 4).date()
     except FileNotFoundError:
         return None
 

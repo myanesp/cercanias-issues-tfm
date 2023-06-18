@@ -44,7 +44,7 @@ services:
       - ALL
 
   dashboard:
-    image: ghcr.io/myanesp/baseimage-pyr
+    image: ghcr.io/myanesp/baseimage-pyr:main
     # build: .
     container_name: cmadrid_issues_dashboard
     restart: always
@@ -53,13 +53,10 @@ services:
       - ./processing:/app/processing
       - ./data:/app/data
       - ./visualization:/app/visualization
-    user: "1000:1000"
+    # user: "1000:1000"
+    ports:
+      - "3838:3838"
     depends_on:
       - nitter
       - nitter-redis
-    healthcheck:
-      test: ping nitter
-      interval: 30s
-      timeout: 5s
-      retries: 2
-    
+
