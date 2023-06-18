@@ -1,0 +1,65 @@
+version: "3"
+
+services:
+
+  nitter:
+    image: zedeus/nitter:38985af6ed30f050201b15425cdac0dc2e286b6d
+    container_name: nitter
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./config/nitter.conf:/src/nitter.conf:Z,ro
+    depends_on:
+      - nitter-redis
+    restart: unless-stopped
+    healthcheck:
+      test: wget -nv --tries=1 --spider http://127.0.0.1:8080/Jack/status/20 || exit 1
+      interval: 30s
+      timeout: 5s
+      retries: 2
+    user: "1000:1000"
+    read_only: true
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+
+  nitter-redis:
+    image: redis:6-alpine3.18
+    container_name: nitter-redis
+    command: redis-server --save 60 1 --loglevel warning
+    volumes:
+      - ./config:/data
+    restart: unless-stopped
+    healthcheck:
+      test: redis-cli ping
+      interval: 30s
+      timeout: 5s
+      retries: 2
+    user: "1000:1000"
+    read_only: true
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+
+  dashboard:
+    image: ghcr.io/myanesp/baseimage-pyr
+    # build: .
+    container_name: cmadrid_issues_dashboard
+    restart: always
+    volumes:
+      - ./harvesting:/app/harvesting
+      - ./processing:/app/processing
+      - ./data:/app/data
+      - ./visualization:/app/visualization
+    user: "1000:1000"
+    depends_on:
+      - nitter
+      - nitter-redis
+    healthcheck:
+      test: ping nitter
+      interval: 30s
+      timeout: 5s
+      retries: 2
+    
