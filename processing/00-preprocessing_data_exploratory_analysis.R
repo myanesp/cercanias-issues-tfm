@@ -5,6 +5,8 @@ library(dplyr)
 library(tidytext)
 library(lubridate)
 library(stringr)
+library(wordcloud)
+library(tidyr)
 
 data_snt <- list()
 directory_path <- "../data/raw_data"
@@ -41,6 +43,7 @@ df <- merged %>%
 
 tokens <- df %>%
   mutate(Tweet = Text) %>% 
+  filter(!grepl('hola', Text)) %>% 
   unnest_tokens(word, Text)
 
 tokens
@@ -48,7 +51,6 @@ tokens
 word_counts <- tokens %>%
   count(word, sort = TRUE)
 
-word_counts
 
 bigrams <- tokens %>%
   mutate(next_word = lead(word)) %>%
@@ -56,6 +58,11 @@ bigrams <- tokens %>%
   mutate(bigram = paste(word, next_word, sep = " "))
 
 bigrams 
+
+bigram_counts <- bigrams %>%
+  count(bigram, sort = TRUE)
+
+wordcloud(bigram_counts, max.words = 100)
 
 trigrams <- tokens %>%
   mutate(trigram = paste0(word, " ", lead(word, 1), " ", lead(word, 2))) %>%
@@ -67,9 +74,6 @@ trigrams_count <- trigrams %>%
   count(trigram, sort = TRUE)
 
 trigrams_count
-
-bigram_counts <- bigrams %>%
-  count(bigram, sort = TRUE)
 
 bigram
 
