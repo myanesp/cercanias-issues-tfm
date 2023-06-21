@@ -7,7 +7,7 @@ from datetime import datetime, timedelta
 
 maxTweets = 1000
 
-instance = "http://localhost:8080" 
+instance = "http://nitter:8080" 
 account = "dummyUser"
 
 def download_tweets_for_date(date):
@@ -58,7 +58,7 @@ def read_last_downloaded_day():
                 last_downloaded_day = datetime.strptime(date_string, "%Y-%m-%d").date()
                 return last_downloaded_day
             else:
-                last_downloaded_day = datetime(2023, 3, 4).date()
+                last_downloaded_day = datetime(2023, 1, 1).date()
     except FileNotFoundError:
         return None
 
@@ -68,7 +68,7 @@ if last_downloaded_day:
     start_date = last_downloaded_day + timedelta(days=1)
     end_date = datetime.now().date() - timedelta(days=1)
 else:
-    start_date = datetime(2023, 3, 4)
+    start_date = datetime(2023, 1, 1)
     end_date = datetime.now().date() - timedelta(days=1)
 
 
@@ -82,6 +82,6 @@ for date in pd.date_range(start=start_date, end=end_date):
             last_downloaded_day = date
             f.write(f"Last downloaded day: {last_downloaded_day}\n")
     except Exception as e:
-        with open('log.txt', 'a') as f:
+        with open(log_file.path, 'a') as f:
             f.write(f"Error occurred on {date}: {str(e)}\n")
     download_tweets_for_date(date)
