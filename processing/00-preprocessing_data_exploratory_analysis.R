@@ -43,7 +43,7 @@ df <- merged %>%
 
 tokens <- df %>%
   mutate(Tweet = Text) %>% 
-  filter(!grepl('hola', Text)) %>% 
+  filter(!str_detect(Text, "hola")) %>% 
   unnest_tokens(word, Text)
 
 tokens
