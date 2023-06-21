@@ -135,6 +135,8 @@ ui <- dashboardPage(
                 infoBoxOutput("meanDay")
               ),
               h3("Tables", align = "center"),
+              h5("2023 data is not included due to the
+                 change in the methodology", align = "center"),
               fluidRow(
                 column(
                   width = 4,
@@ -172,7 +174,10 @@ ui <- dashboardPage(
                     status = "success",
                     collapsible = T,
                     solidHeader = TRUE,
-                    tableOutput("aggregatedYear")
+                    div(
+                      style = "overflow-y: scroll; overflow-x: auto;",
+                      tableOutput("aggregatedYear")
+                    )
                   ),
                 )
               ),
@@ -560,10 +565,10 @@ server <- function(input, output) {
       count() %>%
       pivot_wider(names_from = Year, values_from = n) %>% 
       replace_na(list(`2015` = 0, `2016` = 0, `2017` = 0, `2018` = 0, 
-                      `2019` = 0, `2020` = 0, `2021` = 0, `2022` = 0, 
-                      `2023` = 0)) %>% 
-      select(Lines, `2023`, `2022`, `2021`, `2020`, `2019`, `2018`, `2017`, `2016`, `2015`) %>% 
-      mutate(Total = rowSums(across(`2023`:`2015`))) %>% 
+                      `2019` = 0, `2020` = 0, `2021` = 0, `2022` = 0
+                      )) %>% 
+      select(Lines, `2022`, `2021`, `2020`, `2019`, `2018`, `2017`, `2016`, `2015`) %>% 
+      mutate(Total = rowSums(across(`2022`:`2015`))) %>% 
       select(Lines, Total, everything()) %>% 
       mutate(Total = as.integer(Total)) %>% 
       arrange(desc(Total))
@@ -571,6 +576,7 @@ server <- function(input, output) {
   
   output$aggregatedYear <- renderTable({
     y <- data %>%
+      filter(Year != 2023) %>% 
       mutate(Date = as.Date(Datetime)) %>% 
       group_by(Lines, Date) %>%
       mutate(Rank = dense_rank(Datetime),
@@ -601,6 +607,7 @@ server <- function(input, output) {
   
   output$aggregatedMonth <- renderTable({
     agg_month <- data %>%
+      filter(Year != 2023) %>% 
       mutate(Date = as.Date(Datetime)) %>% 
       unique() %>% 
       group_by(Lines, Date) %>% 
@@ -627,6 +634,7 @@ server <- function(input, output) {
   })
   
   total_years <- data %>%
+    filter(Year != 2023) %>% 
       mutate(Date = as.Date(Datetime)) %>%
       unique() %>%
       group_by(Lines, Date) %>%
@@ -652,6 +660,7 @@ server <- function(input, output) {
   })
  
   total_day <- data %>%
+    filter(Year != 2023) %>% 
     mutate(Date = as.Date(Datetime)) %>%
     unique() %>%
     group_by(Lines, Date) %>%
@@ -675,6 +684,7 @@ server <- function(input, output) {
   })
   
   total_month <- data %>%
+    filter(Year != 2023) %>% 
     mutate(Date = as.Date(Datetime)) %>%
     unique() %>%
     group_by(Lines, Date) %>%
