@@ -63,7 +63,7 @@ cercanias_original_colors <- c(
 
 ui <- dashboardPage(
   skin = "black", 
-  dashboardHeader(title = "Menu"),
+  dashboardHeader(title = "Cercanías Issues"),
   dashboardSidebar(
     sidebarMenu(
       menuItem("Main dashboard", tabName = "dashboard", icon = icon("dashboard")),
