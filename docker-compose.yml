@@ -45,7 +45,7 @@ services:
 
   dashboard:
     image: ghcr.io/myanesp/baseimage-pyr:main
-    # build: .
+    # build: . # Uncomment if you want to build the image from source (available on github.com/myanesp/baseimage-pyr)
     container_name: cmadrid_issues_dashboard
     restart: always
     volumes:
