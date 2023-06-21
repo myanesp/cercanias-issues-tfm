@@ -9,7 +9,7 @@ library(ggplot2)
 library(tidyr)
 library(plotly)
 
-setwd("/app/visualization")
+# setwd("/app/visualization")
 
 data <- read_csv("../data/final_data/cercanias_madrid_issues.csv", col_types = cols(Tweet_Id = col_character())) %>%
   select(2:9) %>% 
@@ -182,9 +182,7 @@ ui <- dashboardPage(
               h4("This work was conducted as the final thesis for the", a("Master
                  Degree in Computational Social Sciences (UC3M)", 
                 href = "https://www.uc3m.es/master/computational-social-science"), br(),
-                 "under the supervision of prof.", a("María Medina",
-                                                     href = "https://twitter.com/mariamadp"),
-                                                     align = "left"),
+                 "under the supervision of prof.", align = "left"),
               h4("You can find the source code hosted on ", a("GitHub", 
                                                        href = "https://github.com/myanesp/cercanias-madrid-tfm"),
                  align = "left", icon("github", lib = "font-awesome"))
@@ -253,7 +251,7 @@ ui <- dashboardPage(
       to scrap the original tweets and one,", 
                     a("built on top of a custom Docker image", href = "https://github.com/myanesp/baseimage-pyr"),
                     "that contains all the libraries and packages needed without
-                    messing with your system dependencies."),
+                    messing with your system dependencies, for harvesting and visualising the data."),
                   status = "success"
                 )
               ),
@@ -273,8 +271,7 @@ ui <- dashboardPage(
               h5("This work was conducted as the final thesis for the", a("Master
                  Degree in Computational Social Sciences (UC3M)",
                  href = "https://www.uc3m.es/master/computational-social-science"), br(),
-                 "under the supervision of prof.", a("María Medina",
-                                               href = "https://twitter.com/mariamedp"),
+                 "under the supervision of prof. María Medina",
                  align = "left"),
               h5("You can find the source code hosted on ", a("GitHub", 
                                                               href = "https://github.com/myanesp/cercanias-madrid-tfm"),
@@ -318,18 +315,21 @@ server <- function(input, output) {
   most_affected_line <- reactive({
     data %>%
       filter(Year == input$year) %>%
-      group_by(Lines) %>%
+      mutate(Date = as.Date(Datetime)) %>% 
+      group_by(Lines, Date) %>%
       mutate(Rank = dense_rank(Datetime),
              Time_Diff_Prev = difftime(Datetime, lag(Datetime), units = "hours"),
              Group_ID = cumsum(Time_Diff_Prev > 6 | is.na(Time_Diff_Prev))) %>%
       distinct(Lines, Group_ID, .keep_all = TRUE) %>% 
-      group_by(Lines) %>%
-      summarise(n = n()) %>%
+      ungroup() %>% 
+      distinct(Tweet_Id, Datetime, Lines, .keep_all = TRUE) %>% 
+      group_by(Lines) %>% 
+      count() %>%
+      ungroup() %>% 
       arrange(desc(n)) %>%
       slice(1) 
   })
-  
-  
+
   
   most_affected_day <- reactive({
     result <- data %>%
@@ -422,7 +422,6 @@ server <- function(input, output) {
              title = paste0("Issues in lines in ", input$year),
              hovermode = "closest")
   })
-  
 
   issues_current_month <- data %>%
     mutate(Month = sprintf("%02d", data$Month)) %>%
@@ -550,14 +549,13 @@ server <- function(input, output) {
   output$aggregatedTable <- renderTable({
     total <- data %>%
       mutate(Date = as.Date(Datetime)) %>%
-      distinct(Tweet_Id, Datetime, Lines, .keep_all = TRUE) %>% 
-      group_by(Lines, Date) %>%
-      ungroup() %>% 
       group_by(Lines) %>%
       mutate(Rank = dense_rank(Datetime),
              Time_Diff_Prev = difftime(Datetime, lag(Datetime), units = "hours"),
              Group_ID = cumsum(Time_Diff_Prev > 6 | is.na(Time_Diff_Prev))) %>%
-      distinct(Lines, Group_ID, .keep_all = TRUE) %>%
+      distinct(Lines, Group_ID, .keep_all = TRUE) %>% 
+      ungroup() %>% 
+      distinct(Tweet_Id, Datetime, Lines, .keep_all = TRUE) %>%
       group_by(Lines, Year) %>% 
       count() %>%
       pivot_wider(names_from = Year, values_from = n) %>% 
@@ -595,6 +593,9 @@ server <- function(input, output) {
     y$Year <- as.integer(y$Year)
     y
   })
+  
+
+  
   month_names <- c("January", "February", "March", "April", "May", "June",
                    "July", "August", "September", "October", "November", "December")
   
