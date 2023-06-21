@@ -5,10 +5,12 @@ library(lubridate)
 library(stringr)
 library(stringi)
 
+setwd("/app/processing")
+
 data_snt <- list()
 directory_path <- "../data/raw_data"
 
-# From march 2023 to today, using snscrape
+# From 2023 to today, using snscrape
 csv_files <- list.files(path = directory_path, pattern = "*.csv", full.names = TRUE)
 
 for (file in csv_files) {

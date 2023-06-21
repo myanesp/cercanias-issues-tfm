@@ -5,7 +5,9 @@ library(tidytext)
 library(lubridate)
 library(stringr)
 library(stringi)
-library(stringdist)
+
+
+setwd("/app/processing")
 
 pattern_lines <- "(?i)(?<!\\S)C\\d+\\b"
 pattern_hashtags <- "(?i)C\\d+\\S*"
@@ -26,12 +28,12 @@ df <- read_csv("../data/processed_data/tweets_cercanias_madrid.csv",
   mutate(original = str_replace(original, "@CercaniasMadrid", "")) %>%
   mutate(Hashtags = str_extract_all(Hashtags, "(#\\w+|\\b\\w+\\b)")) %>% 
   mutate(Hashtags = lapply(Hashtags, function(x) str_replace_all(x, "#", ""))) %>% 
-  unnest(Hashtags, keep_empty = T) %>% 
+  unnest(Hashtags, keep_empty = T) %>%
   mutate(Lines = if_else(is.na(Hashtags),
                        str_extract(original, pattern_lines),
                        if_else(str_detect(Hashtags, pattern_hashtags),
                                str_extract(Hashtags, pattern_hashtags),
-                               NA_character_))) %>% 
+                               NA_character_))) %>%
   mutate(Lines = tolower(Lines)) %>%
   filter(!is.na(Lines) & grepl(paste0(issues, collapse = "|"), Text))
 
