@@ -9,7 +9,7 @@ library(ggplot2)
 library(tidyr)
 library(plotly)
 
-# setwd("/app/visualization")
+setwd("/app/visualization")
 
 data <- read_csv("../data/final_data/cercanias_madrid_issues.csv", col_types = cols(Tweet_Id = col_character())) %>%
   select(2:9) %>% 
