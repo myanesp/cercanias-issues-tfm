@@ -205,7 +205,7 @@ ui <- dashboardPage(
                     a("the GitHub repository", href = "https://github.com/myanesp/cercanias-issues-tfm"),
                     "and you can review it and see how it works."),
                   br(),
-                  p(strong("So, how it works?"), br(), "A Python script downloads all the tweets published by the account, 
+                  p(strong("How does it work?"), br(), "A Python script downloads all the tweets published by the account, 
                     and scrap from a local",
                     a("Nitter instance", href = "https://github.com/zedeus/nitter"),
                     "(a frontend for Twitter) the original tweet if the tweet by @CercaniasMadrid is 
@@ -222,7 +222,7 @@ ui <- dashboardPage(
                     " and now also counts issues if any line is mentioned 
                     on the original tweet to which 
                     the Cercanías account is replying to."),
-                  p(strong("But, how the issues are counted?"), br(), "The script analyses the tweet
+                  p(strong("How are the issues counted?"), br(), "The script analyses the tweet
                     for each day, extract from the tweets the line/s and count as an issue.", br(),
                     br(),
                     "To avoid inflating the data, because the account may tweet 
