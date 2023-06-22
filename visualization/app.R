@@ -187,7 +187,7 @@ ui <- dashboardPage(
               h4("This work was conducted as the final thesis for the", a("Master
                  Degree in Computational Social Sciences (UC3M)", 
                 href = "https://www.uc3m.es/master/computational-social-science"), br(),
-                 "under the supervision of prof.", align = "left"),
+                 "under the supervision of prof. María Medina", align = "left"),
               h4("You can find the source code hosted on ", a("GitHub", 
                                                        href = "https://github.com/myanesp/cercanias-madrid-tfm"),
                  align = "left", icon("github", lib = "font-awesome"))
@@ -208,7 +208,7 @@ ui <- dashboardPage(
                     a("the GitHub repository", href = "https://github.com/myanesp/cercanias-issues-tfm"),
                     "and you can review it and see how it works."),
                   br(),
-                  p(strong("How does it work?"), br(), "A Python script downloads all the tweets published by the account, 
+                  p(strong("How does it work?"), br(), "A Python script downloads all the tweets published the last day by the account, 
                     and scrap from a local",
                     a("Nitter instance", href = "https://github.com/zedeus/nitter"),
                     "(a frontend for Twitter) the original tweet if the tweet by @CercaniasMadrid is 
@@ -298,7 +298,7 @@ server <- function(input, output) {
     min_date <- as.Date(paste0(input$year, "-01-01"))
     max_date <- as.Date(paste0(input$year, "-12-31"))
     if (input$year == 2023) {
-      max_date <- last_data_date
+      max_date <- Sys.Date() - 1
     }
     list(min_date = min_date, max_date = max_date)
   })

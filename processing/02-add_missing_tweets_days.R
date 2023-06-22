@@ -14,7 +14,7 @@ if (!file.exists("../data/processed_data/tweets_cercanias_madrid.csv")) {
 }
 
 df <- read_csv("../data/processed_data/tweets_cercanias_madrid.csv", col_types = cols(Tweet_Id = col_character())) %>% 
-  select(c(2:7))
+  select(c(!1))
 
 last <- as.Date(tail(df$Datetime, n = 1))
 status <- ymd(Sys.Date() - 1)
