@@ -298,7 +298,7 @@ server <- function(input, output) {
     min_date <- as.Date(paste0(input$year, "-01-01"))
     max_date <- as.Date(paste0(input$year, "-12-31"))
     if (input$year == 2023) {
-      max_date <- Sys.Date() - 1
+      max_date <- as.Date(paste0(input$year, "-06-30"))
     }
     list(min_date = min_date, max_date = max_date)
   })
